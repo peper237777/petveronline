@@ -149,6 +149,11 @@
             background: #ccc;
         }
 
+        /* Ukryte pole honeypot */
+        .honeypot {
+            display: none;
+        }
+
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -198,7 +203,10 @@
             <div class="progress-step" data-step="3">Doświadczenie</div>
             <div class="progress-step" data-step="4">Podsumowanie</div>
         </div>
-        <form id="application-form" action="https://formspree.io/f/xnnpLkog" method="POST">
+        <form id="application-form" action="https://formspree.io/f/xnnplkog" method="POST">
+            <!-- Pole honeypot do ochrony przed spamem -->
+            <input type="text" name="_gotcha" class="honeypot" style="display: none;" />
+            
             <!-- Krok 1 -->
             <div class="form-step active" data-step="1">
                 <div class="form-group">
