@@ -132,11 +132,16 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.3s ease, transform 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn:hover {
             background: #005bb5;
             transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-back {
@@ -149,7 +154,22 @@
             background: #ccc;
         }
 
-        /* Ukryte pole honeypot */
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 20px;
+            text-align: center;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .message.error {
+            color: #d32f2f;
+        }
+
         .honeypot {
             display: none;
         }
@@ -197,62 +217,73 @@
         <div class="header">
             <h1>Podanie na Pomocnika</h1>
         </div>
-        <div class="progress-bar">
-            <div class="progress-step active" data-step="1">Podstawy</div>
-            <div class="progress-step" data-step="2">Discord</div>
-            <div class="progress-step" data-step="3">Doświadczenie</div>
-            <div class="progress-step" data-step="4">Podsumowanie</div>
+        <div id="form-content">
+            <div class="progress-bar">
+                <div class="progress-step active" data-step="1">Podstawy</div>
+                <div class="progress-step" data-step="2">Discord</div>
+                <div class="progress-step" data-step="3">Doświadczenie</div>
+                <div class="progress-step" data-step="4">Podsumowanie</div>
+            </div>
+            <form id="application-form" action="https://formspree.io/f/xnnplkog" method="POST">
+                <input type="text" name="_gotcha" class="honeypot" style="display: none;" />
+                
+                <!-- Krok 1 -->
+                <div class="form-step active" data-step="1">
+                    <div class="form-group">
+                        <label for="name">Imię lub pseudonim</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Wiek</label>
+                        <input type="number" id="age" name="age" required>
+                    </div>
+                    <button type="button" class="btn" onclick="nextStep(2)">Dalej</button>
+                </div>
+                <!-- Krok 2 -->
+                <div class="form-step" data-step="2">
+                    <div class="form-group">
+                        <label for="discord">Tag Discord (np. Użytkownik#1234)</label>
+                        <input type="text" id="discord" name="discord" required>
+                    </div>
+                    <button type="button" class="btn btn-back" onclick="prevStep(1)">Wstecz</button>
+                    <button type="button" class="btn" onclick="nextStep(3)">Dalej</button>
+                </div>
+                <!-- Krok 3 -->
+                <div class="form-step" data-step="3">
+                    <div class="form-group">
+                        <label for="experience">Dlaczego chcesz być pomocnikiem?</label>
+                        <textarea id="experience" name="experience" required></textarea>
+                    </div>
+                    <button type="button" class="btn btn-back" onclick="prevStep(2)">Wstecz</button>
+                    <button type="button" class="btn" onclick="nextStep(4)">Dalej</button>
+                </div>
+                <!-- Krok 4 -->
+                <div class="form-step" data-step="4">
+                    <div class="form-group">
+                        <h3>Podsumowanie</h3>
+                        <p><strong>Imię:</strong> <span id="summary-name"></span></p>
+                        <p><strong>Wiek:</strong> <span id="summary-age"></span></p>
+                        <p><strong>Discord:</strong> <span id="summary-discord"></span></p>
+                        <p><strong>Doświadczenie:</strong> <span id="summary-experience"></span></p>
+                    </div>
+                    <button type="button" class="btn btn-back" onclick="prevStep(3)">Wstecz</button>
+                    <button type="submit" class="btn" id="submit-btn">Wyślij podanie</button>
+                </div>
+            </form>
         </div>
-        <form id="application-form" action="https://formspree.io/f/xnnplkog" method="POST">
-            <!-- Pole honeypot do ochrony przed spamem -->
-            <input type="text" name="_gotcha" class="honeypot" style="display: none;" />
-            
-            <!-- Krok 1 -->
-            <div class="form-step active" data-step="1">
-                <div class="form-group">
-                    <label for="name">Imię lub pseudonim</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="age">Wiek</label>
-                    <input type="number" id="age" name="age" required>
-                </div>
-                <button type="button" class="btn" onclick="nextStep(2)">Dalej</button>
-            </div>
-            <!-- Krok 2 -->
-            <div class="form-step" data-step="2">
-                <div class="form-group">
-                    <label for="discord">Tag Discord (np. Użytkownik#1234)</label>
-                    <input type="text" id="discord" name="discord" required>
-                </div>
-                <button type="button" class="btn btn-back" onclick="prevStep(1)">Wstecz</button>
-                <button type="button" class="btn" onclick="nextStep(3)">Dalej</button>
-            </div>
-            <!-- Krok 3 -->
-            <div class="form-step" data-step="3">
-                <div class="form-group">
-                    <label for="experience">Dlaczego chcesz być pomocnikiem?</label>
-                    <textarea id="experience" name="experience" required></textarea>
-                </div>
-                <button type="button" class="btn btn-back" onclick="prevStep(2)">Wstecz</button>
-                <button type="button" class="btn" onclick="nextStep(4)">Dalej</button>
-            </div>
-            <!-- Krok 4 -->
-            <div class="form-step" data-step="4">
-                <div class="form-group">
-                    <h3>Podsumowanie</h3>
-                    <p><strong>Imię:</strong> <span id="summary-name"></span></p>
-                    <p><strong>Wiek:</strong> <span id="summary-age"></span></p>
-                    <p><strong>Discord:</strong> <span id="summary-discord"></span></p>
-                    <p><strong>Doświadczenie:</strong> <span id="summary-experience"></span></p>
-                </div>
-                <button type="button" class="btn btn-back" onclick="prevStep(3)">Wstecz</button>
-                <button type="submit" class="btn">Wyślij podanie</button>
-            </div>
-        </form>
     </div>
 
     <script>
+        // Sprawdzenie, czy podanie zostało już wysłane
+        const hasSubmitted = localStorage.getItem('hasSubmitted');
+        const formContent = document.getElementById('form-content');
+        const submitBtn = document.getElementById('submit-btn');
+
+        if (hasSubmitted) {
+            // Jeśli podanie zostało już wysłane, ukryj formularz i pokaż komunikat
+            formContent.innerHTML = '<div class="message error">Już wysłałeś podanie. Możesz wysłać tylko jedno podanie.</div>';
+        }
+
         function nextStep(step) {
             document.querySelector(`.form-step.active`).classList.remove('active');
             document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
@@ -275,6 +306,27 @@
             document.querySelector(`.progress-step.active`).classList.remove('active');
             document.querySelector(`.progress-step[data-step="${step}"]`).classList.add('active');
         }
+
+        // Obsługa wysyłania formularza
+        const form = document.getElementById('application-form');
+        form.addEventListener('submit', function(e) {
+            // Zapisujemy informację o wysłaniu formularza w localStorage
+            localStorage.setItem('hasSubmitted', 'true');
+        });
+
+        // Obsługa zdarzeń dotykowych i kliknięć dla urządzeń mobilnych i komputerów
+        submitBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            if (!localStorage.getItem('hasSubmitted')) {
+                form.submit();
+            }
+        });
+
+        submitBtn.addEventListener('click', function(e) {
+            if (!localStorage.getItem('hasSubmitted')) {
+                form.submit();
+            }
+        });
     </script>
 </body>
 </html>
